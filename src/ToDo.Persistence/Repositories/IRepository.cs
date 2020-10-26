@@ -39,5 +39,14 @@ namespace ToDo.Persistence.Repositories
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns></returns>
         Task ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken);
+
+
+        /// <summary>
+        /// Delete multiple items from the db asynchronously 
+        /// </summary>
+        /// <param name="predicate">Predicate to select items</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns></returns>
+        Task DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     }
 }

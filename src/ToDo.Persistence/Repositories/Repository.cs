@@ -24,6 +24,7 @@ namespace ToDo.Persistence.Repositories
             _txManager = txManager;
         }
 
+        /// <inheritdoc />
         public async Task<TResult> QueryAsync<TResult>(Func<Task<TResult>> execute, CancellationToken ct)
         {
             try
@@ -41,6 +42,7 @@ namespace ToDo.Persistence.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task ExecuteAsync(Func<Task> execute, CancellationToken cancellationToken)
         {
             try
@@ -56,6 +58,7 @@ namespace ToDo.Persistence.Repositories
             }
         }
 
+        /// <inheritdoc />
         public async Task AddAsync(TEntity item, CancellationToken ct)
         {
             _txManager.EnsureTransactionIsAlive();
@@ -65,14 +68,15 @@ namespace ToDo.Persistence.Repositories
             await _session.SaveAsync(item, ct).ConfigureAwait(false);
         }
 
-        public async Task ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken ct)
+        /// <inheritdoc />
+        public async Task ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken)
         {
             _txManager.EnsureTransactionIsAlive();
 
             _logger.Verbose("{function} Modifying items with [Predicate({@predicate})]",
                 $"{GetInterfaceName()}.{nameof(ModifyAsync)}", predicate.ToReadableString());
 
-            var items = await _session.Query<TEntity>().Where(predicate).ToListAsync(ct);
+            var items = await _session.Query<TEntity>().Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
             if (!items.Any())
             {
                 throw new Exception($"{GetInterfaceName()}.{nameof(ModifyAsync)}: Not found any item matching [Predicate({predicate.ToReadableString()})]!");
@@ -81,7 +85,27 @@ namespace ToDo.Persistence.Repositories
             foreach (var item in items)
             {
                 how.Invoke(item);
-                await _session.UpdateAsync(item, ct);
+                await _session.UpdateAsync(item, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+        {
+            _txManager.EnsureTransactionIsAlive();
+
+            _logger.Verbose("{function} Deleting items with [Predicate({@predicate})]",
+                $"{GetInterfaceName()}.{nameof(DeleteAsync)}", predicate.ToReadableString());
+
+            var items = await _session.Query<TEntity>().Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
+            if (!items.Any())
+            {
+                throw new Exception($"{GetInterfaceName()}.{nameof(DeleteAsync)}: Not found any item matching [Predicate({predicate.ToReadableString()})]!");
+            }
+
+            foreach (var item in items)
+            {
+                await _session.DeleteAsync(item, cancellationToken).ConfigureAwait(false);
             }
         }
 
