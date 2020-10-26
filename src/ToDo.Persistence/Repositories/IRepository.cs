@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ToDo.Persistence.Repositories
 {
-    public interface IRepository<in TEntity>
+    public interface IRepository<TEntity>
     {
         /// <summary>
         /// Execute Query Transaction asynchronously
@@ -29,5 +30,14 @@ namespace ToDo.Persistence.Repositories
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns></returns>
         Task AddAsync(TEntity item, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Modify multiple items in the db asynchronously
+        /// </summary>
+        /// <param name="predicate">Predicate to select items</param>
+        /// <param name="how">How to modify them</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns></returns>
+        Task ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken);
     }
 }
