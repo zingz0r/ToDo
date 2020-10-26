@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +10,10 @@ using Serilog;
 using Serilog.Context;
 using System;
 using System.Reflection;
+using ToDo.Application.Models;
 using ToDo.Persistence.Modules;
 using ToDo.Persistence.Profiles;
+using ToDo.WebApi.Filters;
 
 namespace ToDo.WebApi
 {
@@ -29,7 +32,8 @@ namespace ToDo.WebApi
                         services.AddControllers().AddApplicationPart(Assembly.GetEntryAssembly())
                             .AddControllersAsServices();
                         services.AddCors();
-                        services.AddMvc();
+                        services.AddMvc(setup => { setup.Filters.Add(new ValidationFilter()); })
+                            .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<ToDoModel>());
                     })
                     .ConfigureContainer<ContainerBuilder>((context, builder) =>
                     {
