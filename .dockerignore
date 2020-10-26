@@ -1,0 +1,9 @@
+**/.dockerignore
+**/.env
+**/postman
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/.toolstarget
+**/node_modules
