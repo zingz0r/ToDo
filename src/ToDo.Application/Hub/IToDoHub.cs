@@ -8,5 +8,6 @@ namespace ToDo.Application.Hub
     {
         Task ToDoAdded(ToDoModel item);
         Task ToDoFinished(Guid id);
+        Task ToDoDeleted(Guid id);
     }
 }

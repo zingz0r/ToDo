@@ -65,5 +65,18 @@ namespace ToDo.WebApi.Controllers
 
             await _todoHub.Clients.All.ToDoFinished(id).ConfigureAwait(false);
         }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            await _toDoRepository.ExecuteAsync(async () =>
+            {
+                _logger.Information("Deleting todo item with id: '{id}'", id);
+
+                await _toDoRepository.DeleteAsync(x => x.Id == id, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
+
+            await _todoHub.Clients.All.ToDoDeleted(id).ConfigureAwait(false);
+        }
     }
 }
