@@ -5,7 +5,10 @@ using Microsoft.Extensions.Configuration;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
+using ToDo.Persistence.Entities;
 using ToDo.Persistence.Maps;
+using ToDo.Persistence.Repositories;
+using ToDo.Persistence.TransactionManager;
 
 namespace ToDo.Persistence.Modules
 {
@@ -31,6 +34,9 @@ namespace ToDo.Persistence.Modules
                 .OnRelease(session => { })
                 .As<ISession>()
                 .InstancePerLifetimeScope();
+
+            builder.RegisterType<TransactionManager.TransactionManager>().As<ITransactionManager>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository<ToDoEntity>>().As<IRepository<ToDoEntity>>().InstancePerLifetimeScope();
         }
     }
 }
