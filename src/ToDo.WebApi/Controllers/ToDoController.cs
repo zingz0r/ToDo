@@ -52,5 +52,18 @@ namespace ToDo.WebApi.Controllers
 
             await _todoHub.Clients.All.ToDoAdded(_mapper.Map<ToDoModel>(entity)).ConfigureAwait(false);
         }
+
+        [HttpPatch("Finish/{id}")]
+        public async Task FinishAsync(Guid id, CancellationToken cancellationToken)
+        {
+            await _toDoRepository.ExecuteAsync(async () =>
+            {
+                _logger.Information("Finishing todo item with id: '{id}'", id);
+
+                await _toDoRepository.ModifyAsync(x => x.Id == id, y => y.IsFinished = true, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
+
+            await _todoHub.Clients.All.ToDoFinished(id).ConfigureAwait(false);
+        }
     }
 }
