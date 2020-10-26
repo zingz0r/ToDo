@@ -15,7 +15,7 @@ namespace ToDo.Persistence.TransactionManager
         public TransactionManager(ISession session, ILogger logger)
         {
             _session = session;
-            _logger = logger;
+            _logger = logger.ForContext<TransactionManager>();
         }
 
         public void BeginTransaction()

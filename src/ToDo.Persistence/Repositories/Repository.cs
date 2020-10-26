@@ -20,7 +20,7 @@ namespace ToDo.Persistence.Repositories
         public Repository(ISession session, ILogger logger, ITransactionManager txManager)
         {
             _session = session;
-            _logger = logger;
+            _logger = logger.ForContext<Repository<TEntity>>();
             _txManager = txManager;
         }
 
