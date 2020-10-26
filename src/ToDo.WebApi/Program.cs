@@ -10,6 +10,7 @@ using Serilog;
 using Serilog.Context;
 using System;
 using System.Reflection;
+using ToDo.Application.Hub;
 using ToDo.Application.Models;
 using ToDo.Persistence.Modules;
 using ToDo.Persistence.Profiles;
@@ -32,6 +33,9 @@ namespace ToDo.WebApi
                         services.AddControllers().AddApplicationPart(Assembly.GetEntryAssembly())
                             .AddControllersAsServices();
                         services.AddCors();
+
+                        services.AddSignalR(options => { options.EnableDetailedErrors = true; });
+
                         services.AddMvc(setup => { setup.Filters.Add(new ValidationFilter()); })
                             .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<ToDoModel>());
                     })
@@ -60,6 +64,7 @@ namespace ToDo.WebApi
 
                         app.UseEndpoints(endpoints =>
                         {
+                            endpoints.MapHub<ToDoHub>("/ic");
                             endpoints.MapControllers();
                         });
                     }))
