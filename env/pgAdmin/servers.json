@@ -7,7 +7,7 @@
             "Username": "admin",
             "Password": "admin",
             "SSLMode": "prefer",
-            "Host": "ic-postgres",
+            "Host": "todo-postgres",
             "MaintenanceDB": "postgres"
             }
       }
