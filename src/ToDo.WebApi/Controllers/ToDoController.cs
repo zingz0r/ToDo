@@ -34,6 +34,28 @@ namespace ToDo.WebApi.Controllers
             _logger = logger.ForContext<ToDoController>();
         }
 
+
+        [HttpGet("Search/{pattern}")]
+        public async Task<IEnumerable<ToDoModel>> SearchAsync(string pattern, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                ModelState.AddModelError("Pattern", "Pattern cannot be empty");
+                return null;
+            }
+
+            var items = await _toDoRepository.QueryAsync(async () =>
+            {
+                return await _toDoRepository.GetAsync(x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()),
+                    y => y.Task, cancellationToken).ConfigureAwait(false);
+
+            }, cancellationToken).ConfigureAwait(false);
+
+            _logger.Information("Found todo items matching pattern: '{pattern}', items: {@items}", pattern, items);
+
+            return _mapper.Map<IEnumerable<ToDoModel>>(items);
+        }
+
         [HttpPost]
         public async Task AddAsync([FromBody] AddToDoModel addModel, CancellationToken cancellationToken)
         {
@@ -100,27 +122,6 @@ namespace ToDo.WebApi.Controllers
             {
                 await _todoHub.Clients.All.ToDoDeleted(_mapper.Map<ToDoModel>(deletion)).ConfigureAwait(false);
             }
-        }
-
-        [HttpGet("Search/{pattern}")]
-        public async Task<IEnumerable<ToDoModel>> SearchAsync(string pattern, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrEmpty(pattern))
-            {
-                ModelState.AddModelError("Pattern", "Pattern cannot be empty");
-                return null;
-            }
-
-            var items = await _toDoRepository.QueryAsync(async () =>
-            {
-                return await _toDoRepository.GetAsync(x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()),
-                    y => y.Task, cancellationToken).ConfigureAwait(false);
-
-            }, cancellationToken).ConfigureAwait(false);
-
-            _logger.Information("Found todo items matching pattern: '{pattern}', items: {@items}", pattern, items);
-
-            return _mapper.Map<IEnumerable<ToDoModel>>(items);
         }
     }
 }
