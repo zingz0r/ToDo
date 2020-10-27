@@ -1,0 +1,15 @@
+<div *ngFor="let alert of alerts" class="{{cssClass(alert)}}" [@fade]>
+    <div fxLayout="row" fxLayoutAlign="space-between center" (click)="removeAlert(alert)" fxLayoutGap="10px">
+        <mat-icon>{{icon(alert)}}</mat-icon>
+
+        <div fxLayout="column" fxFlex>
+            <div> <b>{{alert.title}}</b> </div>
+            <div>{{alert.message}}</div>
+        </div>
+        <div>
+            <button mat-icon-button (click)="removeAlert(alert)">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>
