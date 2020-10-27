@@ -70,7 +70,7 @@ namespace ToDo.WebApi.Controllers
         }
 
         [HttpPatch("Modify/{id}")]
-        public async Task FinishAsync([FromBody] ModifyToDoModel modifyModel, CancellationToken cancellationToken)
+        public async Task ModifyAsync([FromBody] ModifyToDoModel modifyModel, CancellationToken cancellationToken)
         {
             var modifications = await _toDoRepository.QueryAsync(async () =>
             {
