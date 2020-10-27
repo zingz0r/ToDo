@@ -20,6 +20,8 @@ namespace ToDo.WebApi
 {
     public static class Program
     {
+        private const string CorsPolicy = "CorsPolicy";
+
         public static int Main(string[] args)
         {
             LogContext.PushProperty("SourceContext", "Main");
@@ -35,6 +37,15 @@ namespace ToDo.WebApi
                             .AddNewtonsoftJson();
 
                         services.AddCors();
+
+                        services.AddCors(options =>
+                        {
+                            options.AddPolicy(CorsPolicy, builder => builder
+                                .WithOrigins(context.Configuration["Client:Url"])
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                                .AllowCredentials());
+                        });
 
                         services.AddSignalR(options => { options.EnableDetailedErrors = true; });
 
@@ -64,10 +75,7 @@ namespace ToDo.WebApi
                             app.UseDeveloperExceptionPage();
                         }
 
-                        app.UseCors(cBuilder => cBuilder
-                            .AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader());
+                        app.UseCors(CorsPolicy);
 
                         app.UseRouting();
 
