@@ -10,11 +10,11 @@ using Serilog;
 using Serilog.Context;
 using System;
 using System.Reflection;
-using ToDo.Application.Hub;
 using ToDo.Application.Models;
 using ToDo.Persistence.Modules;
 using ToDo.Persistence.Profiles;
 using ToDo.WebApi.Filters;
+using ToDo.WebApi.Hub;
 
 namespace ToDo.WebApi
 {

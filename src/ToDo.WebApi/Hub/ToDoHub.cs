@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Serilog;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
-namespace ToDo.Application.Hub
+namespace ToDo.WebApi.Hub
 {
     public class ToDoHub : Hub<IToDoHub>
     {
