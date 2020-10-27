@@ -3,6 +3,6 @@ export const environment = {
 
   settings: {
     backend: 'http://localhost:5000/api',
-    hub: 'http://localhost:5000/todo',
+    signalrhub: 'http://localhost:5000/todo',
   }
 };
