@@ -33,12 +33,18 @@ namespace ToDo.WebApi
                         services.AddControllers().AddApplicationPart(Assembly.GetEntryAssembly())
                             .AddControllersAsServices()
                             .AddNewtonsoftJson();
+
                         services.AddCors();
 
                         services.AddSignalR(options => { options.EnableDetailedErrors = true; });
 
                         services.AddMvc(setup => { setup.Filters.Add(new ValidationFilter()); })
-                            .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<ToDoModel>());
+                            .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<ToDoModel>())
+                            .AddNewtonsoftJson(settings =>
+                                {
+                                    settings.SerializerSettings.Converters.Add(
+                                        new Newtonsoft.Json.Converters.StringEnumConverter());
+                                });
 
                         services.AddSwaggerDocument(settings => { settings.Title = "ToDo Application"; });
                     })
