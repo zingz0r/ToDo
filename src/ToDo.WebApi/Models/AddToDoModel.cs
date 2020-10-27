@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ToDo.Application.Models
+namespace ToDo.WebApi.Models
 {
     public class AddToDoModel
     {
