@@ -7,22 +7,31 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToolbarComponent } from './layout/toolbar/toolbar.component';
 import { ToDoComponent } from './todo/todo.component';
+import { ToDoDetailsComponent } from './todo/todo-details/todo-details.component';
+import { ToDoSearchComponent } from './todo/todo-search/todo-search.component';
+import { ToDoAddComponent } from './todo/todo-add/todo-add.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ToolbarComponent,
     ToDoComponent,
+    ToDoDetailsComponent,
+    ToDoSearchComponent,
+    ToDoAddComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,11 +42,14 @@ import { ToDoComponent } from './todo/todo.component';
     HttpClientModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
     MatChipsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSelectModule,
+    MatTableModule,
     MatToolbarModule,
     ReactiveFormsModule
   ],
