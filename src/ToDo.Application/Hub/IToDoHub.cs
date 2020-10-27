@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ToDo.WebApi.Models;
+using ToDo.Application.Models;
 
-namespace ToDo.WebApi.Hub
+namespace ToDo.Application.Hub
 {
     public interface IToDoHub
     {
         Task ToDoAdded(ToDoModel item);
         Task ToDoFinished(Guid id);
-        Task ToDoModified(ToDoModel item);
         Task ToDoDeleted(Guid id);
     }
 }
