@@ -1,0 +1,29 @@
+<h2>Details</h2>
+<mat-table [dataSource]="datasource" class="mat-elevation-z8" fxFill>
+    <ng-container matColumnDef="isfinished">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-checkbox color="primary" [checked]="element.isFinished"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+    <ng-container matColumnDef="task">
+      <mat-header-cell *matHeaderCellDef>Task</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.task }}</mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="operations">
+        <mat-header-cell *matHeaderCellDef >Operations</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-cell>
+      </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
