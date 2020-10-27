@@ -5,10 +5,10 @@ using Serilog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ToDo.Application.Hub;
 using ToDo.Application.Models;
 using ToDo.Persistence.Entities;
 using ToDo.Persistence.Repositories;
+using ToDo.WebApi.Hub;
 
 namespace ToDo.WebApi.Controllers
 {
@@ -34,13 +34,13 @@ namespace ToDo.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task AddAsync([FromBody] AddToDoModel todoModel, CancellationToken cancellationToken)
+        public async Task AddAsync([FromBody] AddToDoModel addModel, CancellationToken cancellationToken)
         {
             var entity = new ToDoEntity
             {
                 Id = Guid.NewGuid(),
                 IsFinished = false,
-                Task = todoModel.Task
+                Task = addModel.Task
             };
 
             await _toDoRepository.ExecuteAsync(async () =>
@@ -56,27 +56,49 @@ namespace ToDo.WebApi.Controllers
         [HttpPatch("Finish/{id}")]
         public async Task FinishAsync(Guid id, CancellationToken cancellationToken)
         {
-            await _toDoRepository.ExecuteAsync(async () =>
+            var finishes = await _toDoRepository.QueryAsync(async () =>
             {
                 _logger.Information("Finishing todo item with id: '{id}'", id);
 
-                await _toDoRepository.ModifyAsync(x => x.Id == id, y => y.IsFinished = true, cancellationToken).ConfigureAwait(false);
+                return await _toDoRepository.ModifyAsync(x => x.Id == id, y => y.IsFinished = true, cancellationToken).ConfigureAwait(false);
             }, cancellationToken).ConfigureAwait(false);
 
-            await _todoHub.Clients.All.ToDoFinished(id).ConfigureAwait(false);
+            foreach (var finish in finishes)
+            {
+                await _todoHub.Clients.All.ToDoFinished(_mapper.Map<ToDoModel>(finish)).ConfigureAwait(false);
+            }
+        }
+
+        [HttpPatch("Modify/{id}")]
+        public async Task FinishAsync([FromBody] ModifyToDoModel modifyModel, CancellationToken cancellationToken)
+        {
+            var modifications = await _toDoRepository.QueryAsync(async () =>
+            {
+                _logger.Information("Modifying todo item's text with id: '{id}'", modifyModel.Id);
+
+                return await _toDoRepository.ModifyAsync(x => x.Id == modifyModel.Id, y => y.Task = modifyModel.Task, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
+
+            foreach (var modification in modifications)
+            {
+                await _todoHub.Clients.All.ToDoModified(_mapper.Map<ToDoModel>(modification)).ConfigureAwait(false);
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            await _toDoRepository.ExecuteAsync(async () =>
+            var deletions = await _toDoRepository.QueryAsync(async () =>
             {
                 _logger.Information("Deleting todo item with id: '{id}'", id);
 
-                await _toDoRepository.DeleteAsync(x => x.Id == id, cancellationToken).ConfigureAwait(false);
+                return await _toDoRepository.DeleteAsync(x => x.Id == id, cancellationToken).ConfigureAwait(false);
             }, cancellationToken).ConfigureAwait(false);
 
-            await _todoHub.Clients.All.ToDoDeleted(id).ConfigureAwait(false);
+            foreach (var deletion in deletions)
+            {
+                await _todoHub.Clients.All.ToDoDeleted(_mapper.Map<ToDoModel>(deletion)).ConfigureAwait(false);
+            }
         }
     }
 }
