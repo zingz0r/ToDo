@@ -2,6 +2,7 @@
 using NHibernate.Linq;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -69,7 +70,7 @@ namespace ToDo.Persistence.Repositories
         }
 
         /// <inheritdoc />
-        public async Task ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken)
+        public async Task<IEnumerable<TEntity>> ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken)
         {
             _txManager.EnsureTransactionIsAlive();
 
@@ -87,10 +88,12 @@ namespace ToDo.Persistence.Repositories
                 how.Invoke(item);
                 await _session.UpdateAsync(item, cancellationToken).ConfigureAwait(false);
             }
+
+            return items;
         }
 
         /// <inheritdoc />
-        public async Task DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+        public async Task<IEnumerable<TEntity>> DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
         {
             _txManager.EnsureTransactionIsAlive();
 
@@ -107,6 +110,8 @@ namespace ToDo.Persistence.Repositories
             {
                 await _session.DeleteAsync(item, cancellationToken).ConfigureAwait(false);
             }
+
+            return items;
         }
 
         private string GetInterfaceName()

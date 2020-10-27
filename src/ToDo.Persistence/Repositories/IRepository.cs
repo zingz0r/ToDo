@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,8 +38,8 @@ namespace ToDo.Persistence.Repositories
         /// <param name="predicate">Predicate to select items</param>
         /// <param name="how">How to modify them</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns></returns>
-        Task ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken);
+        /// <returns>Modified items</returns>
+        Task<IEnumerable<TEntity>> ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken);
 
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace ToDo.Persistence.Repositories
         /// </summary>
         /// <param name="predicate">Predicate to select items</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns></returns>
-        Task DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
+        /// <returns>Deleted items</returns>
+        Task<IEnumerable<TEntity>> DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     }
 }
