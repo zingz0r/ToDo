@@ -33,12 +33,24 @@ namespace ToDo.Persistence.Repositories
         Task AddAsync(TEntity item, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Get multiple items from the db asynchronously in a range
+        /// </summary>
+        /// <param name="predicate">Filter expression</param>
+        /// <param name="orderBy">Order by expression</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <param name="max">Maximum number of entities. -1 = all</param>
+        /// <param name="skip">Skip a number of entities.</param>
+        /// <returns>TEntity the found items</returns>
+        Task<IEnumerable<TEntity>> GetAsync<TKey>(Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, TKey>> orderBy, CancellationToken ct, int max = -1, int skip = -1);
+
+        /// <summary>
         /// Modify multiple items in the db asynchronously
         /// </summary>
         /// <param name="predicate">Predicate to select items</param>
         /// <param name="how">How to modify them</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Modified items</returns>
+        /// <returns>TEntity the modified items</returns>
         Task<IEnumerable<TEntity>> ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken);
 
 
@@ -47,7 +59,7 @@ namespace ToDo.Persistence.Repositories
         /// </summary>
         /// <param name="predicate">Predicate to select items</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>Deleted items</returns>
+        /// <returns>TEntity the deleted items</returns>
         Task<IEnumerable<TEntity>> DeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     }
 }

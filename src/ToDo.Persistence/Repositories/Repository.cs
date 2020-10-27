@@ -70,6 +70,33 @@ namespace ToDo.Persistence.Repositories
         }
 
         /// <inheritdoc />
+        public async Task<IEnumerable<TEntity>> GetAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, CancellationToken ct, int max = -1, int skip = -1)
+        {
+            _txManager.EnsureTransactionIsAlive();
+
+            _logger.Verbose("{function} Getting items with [Predicate({@predicate})] [OrderBy({@orderBy})] [Skipping({skip})] [Taking({max})]",
+                $"{GetInterfaceName()}.{nameof(GetAsync)}", predicate.ToReadableString(), orderBy.ToReadableString(), skip, max);
+
+            var q = _session.Query<TEntity>().Where(predicate);
+
+            if (skip > 0)
+            {
+                q = q.Skip(skip);
+            }
+
+            if (max > 0)
+            {
+                q = q.Take(max);
+            }
+
+            q = q.OrderBy(orderBy);
+
+            var res = await q.ToListAsync(ct);
+
+            return res;
+        }
+
+        /// <inheritdoc />
         public async Task<IEnumerable<TEntity>> ModifyAsync(Expression<Func<TEntity, bool>> predicate, Action<TEntity> how, CancellationToken cancellationToken)
         {
             _txManager.EnsureTransactionIsAlive();
