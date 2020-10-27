@@ -77,21 +77,21 @@ namespace ToDo.Persistence.Repositories
             _logger.Verbose("{function} Getting items with [Predicate({@predicate})] [OrderBy({@orderBy})] [Skipping({skip})] [Taking({max})]",
                 $"{GetInterfaceName()}.{nameof(GetAsync)}", predicate.ToReadableString(), orderBy.ToReadableString(), skip, max);
 
-            var q = _session.Query<TEntity>().Where(predicate);
+            var query = _session.Query<TEntity>().Where(predicate);
 
             if (skip > 0)
             {
-                q = q.Skip(skip);
+                query = query.Skip(skip);
             }
 
             if (max > 0)
             {
-                q = q.Take(max);
+                query = query.Take(max);
             }
 
-            q = q.OrderBy(orderBy);
+            query = query.OrderByDescending(orderBy);
 
-            var res = await q.ToListAsync(ct);
+            var res = await query.ToListAsync(ct);
 
             return res;
         }
