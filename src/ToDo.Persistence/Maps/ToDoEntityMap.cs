@@ -12,6 +12,7 @@ namespace ToDo.Persistence.Maps
             Id(x => x.Id).GeneratedBy.Assigned();
             Map(x => x.IsFinished);
             Map(x => x.Task);
+            Map(x => x.Created);
         }
     }
 }

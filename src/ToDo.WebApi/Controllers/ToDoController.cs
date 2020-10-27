@@ -48,7 +48,7 @@ namespace ToDo.WebApi.Controllers
             {
                 return await _toDoRepository.GetAsync(x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()) && state == ToDoState.Any ||
                                                            (state == ToDoState.Finished ? x.IsFinished : state == ToDoState.Ongoing && !x.IsFinished),
-                    y => y.Task, cancellationToken).ConfigureAwait(false);
+                    y => y.Created, cancellationToken).ConfigureAwait(false);
 
             }, cancellationToken).ConfigureAwait(false);
 
@@ -64,7 +64,8 @@ namespace ToDo.WebApi.Controllers
             {
                 Id = Guid.NewGuid(),
                 IsFinished = false,
-                Task = addModel.Task
+                Task = addModel.Task,
+                Created = DateTime.UtcNow
             };
 
             await _toDoRepository.ExecuteAsync(async () =>
