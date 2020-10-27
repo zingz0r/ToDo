@@ -5,8 +5,14 @@ namespace ToDo.Application.Models
 {
     public class ModifyToDoModel
     {
-        public Guid Id { get; set; }
-        public string Task { get; set; }
+        public Guid Id { get; }
+        public string Task { get; }
+
+        public ModifyToDoModel(Guid id, string task)
+        {
+            Id = id;
+            Task = task;
+        }
     }
 
     public class ModifyToDoModelValidator : AbstractValidator<ModifyToDoModel>
