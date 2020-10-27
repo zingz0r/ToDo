@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ToDo.Application.Models;
@@ -99,6 +100,27 @@ namespace ToDo.WebApi.Controllers
             {
                 await _todoHub.Clients.All.ToDoDeleted(_mapper.Map<ToDoModel>(deletion)).ConfigureAwait(false);
             }
+        }
+
+        [HttpGet("Search/{pattern}")]
+        public async Task<IEnumerable<ToDoModel>> SearchAsync(string pattern, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                ModelState.AddModelError("Pattern", "Pattern cannot be empty");
+                return null;
+            }
+
+            var items = await _toDoRepository.QueryAsync(async () =>
+            {
+                return await _toDoRepository.GetAsync(x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()),
+                    y => y.Task, cancellationToken).ConfigureAwait(false);
+
+            }, cancellationToken).ConfigureAwait(false);
+
+            _logger.Information("Found todo items matching pattern: '{pattern}', items: {@items}", pattern, items);
+
+            return _mapper.Map<IEnumerable<ToDoModel>>(items);
         }
     }
 }
