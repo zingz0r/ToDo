@@ -1,0 +1,17 @@
+<h2>Search</h2>
+<form [formGroup]="searchForm" (ngSubmit)="onSearch()" fxLayout="row" fxLayoutGap="20px">
+  <mat-form-field appearance="fill">
+    <mat-label>Task</mat-label>
+    <input matInput placeholder="" formControlName="pattern" />
+    <mat-hint>Search for text in tasks</mat-hint>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Task State</mat-label>
+    <mat-select [(value)]="selectedState" (selectionChange)="onSearch()">
+      <mat-option *ngFor="let todoState of todoStates" [value]="todoState.value">
+        {{todoState.viewValue}}
+      </mat-option>
+    </mat-select>
+    <mat-hint>Filter based on task state</mat-hint>
+  </mat-form-field>
+</form>
