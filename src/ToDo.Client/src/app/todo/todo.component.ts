@@ -13,6 +13,8 @@ import { ToDoAdded } from '../signals/todo.signals';
 })
 export class ToDoComponent implements OnInit, OnDestroy {
 
+  filterState = ToDoState.Any;
+
   constructor(private todoService: ToDoService, private signalRService: SignalRService) {
     this.todoService.Search('*', ToDoState.Any, (res: ToDoModel[]) => {
       this.toDoItems = res;
@@ -25,7 +27,9 @@ export class ToDoComponent implements OnInit, OnDestroy {
     this.signalRService.startConnection().then(() => {
       this.signalRService.startListeningTo(
         ToDoAdded,
-        (signal) => true,
+        (signal) => this.filterState === ToDoState.Any ||
+          this.filterState === ToDoState.Finished && signal.isFinished ||
+          this.filterState === ToDoState.Ongoing && !signal.isFinished,
         (signal) => {
           this.toDoItems.push({ id: signal.id, isFinished: signal.isFinished, created: signal.created, task: signal.task });
           this.toDoItems.sort((a, b) => +new Date(b.created) - +new Date(a.created));
@@ -42,6 +46,7 @@ export class ToDoComponent implements OnInit, OnDestroy {
   onSearch(event: SearchModel): void {
     this.todoService.Search(event.pattern, event.state, (res: ToDoModel[]) => {
       this.toDoItems = res;
+      this.filterState = event.state;
     });
   }
 }
