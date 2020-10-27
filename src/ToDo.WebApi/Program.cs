@@ -31,7 +31,8 @@ namespace ToDo.WebApi
                     .ConfigureServices((context, services) =>
                     {
                         services.AddControllers().AddApplicationPart(Assembly.GetEntryAssembly())
-                            .AddControllersAsServices();
+                            .AddControllersAsServices()
+                            .AddNewtonsoftJson();
                         services.AddCors();
 
                         services.AddSignalR(options => { options.EnableDetailedErrors = true; });
