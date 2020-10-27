@@ -39,6 +39,8 @@ namespace ToDo.WebApi
 
                         services.AddMvc(setup => { setup.Filters.Add(new ValidationFilter()); })
                             .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<ToDoModel>());
+
+                        services.AddSwaggerDocument(settings => { settings.Title = "ToDo Application"; });
                     })
                     .ConfigureContainer<ContainerBuilder>((context, builder) =>
                     {
@@ -65,9 +67,12 @@ namespace ToDo.WebApi
 
                         app.UseEndpoints(endpoints =>
                         {
-                            endpoints.MapHub<ToDoHub>("/ic");
+                            endpoints.MapHub<ToDoHub>("/todo");
                             endpoints.MapControllers();
                         });
+
+                        app.UseOpenApi();
+                        app.UseSwaggerUi3();
                     }))
                     .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
                         .ReadFrom.Configuration(hostingContext.Configuration))
