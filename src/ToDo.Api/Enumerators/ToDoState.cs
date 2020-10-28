@@ -1,4 +1,4 @@
-﻿namespace ToDo.Application.Enumerators
+﻿namespace ToDo.Api.Enumerators
 {
     public enum ToDoState
     {

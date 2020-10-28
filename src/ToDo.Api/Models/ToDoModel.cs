@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ToDo.Application.Models
+namespace ToDo.Api.Models
 {
     public class ToDoModel
     {

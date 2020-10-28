@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.WebApi", "ToDo.WebApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Persistence", "ToDo.Persistence\ToDo.Persistence.csproj", "{344F8DE4-CF3B-4239-B538-6E59F25BE6D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Application", "ToDo.Application\ToDo.Application.csproj", "{1225B5DA-02D5-4F64-A702-9B94E7CD7CE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDo.Api", "ToDo.Api\ToDo.Api.csproj", "{1225B5DA-02D5-4F64-A702-9B94E7CD7CE5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Tests", "ToDo.Tests\ToDo.Tests.csproj", "{19AFE9AA-A248-46BC-8199-ADE79B065036}"
 EndProject

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using ToDo.Application.Models;
+using ToDo.Api.Models;
 
 namespace ToDo.WebApi.Hub
 {

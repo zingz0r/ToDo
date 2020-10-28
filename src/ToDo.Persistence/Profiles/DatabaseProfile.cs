@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ToDo.Application.Models;
+using ToDo.Api.Models;
 using ToDo.Persistence.Entities;
 
 namespace ToDo.Persistence.Profiles
