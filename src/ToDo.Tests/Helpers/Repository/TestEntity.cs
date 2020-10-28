@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ToDo.Tests.RepositoryTestsData
+namespace ToDo.Tests.Helpers.Repository
 {
     public class TestEntity
     {

@@ -1,6 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 
-namespace ToDo.Tests.RepositoryTestsData
+namespace ToDo.Tests.Helpers.Repository
 {
     public class TestMap : ClassMap<TestEntity>
     {

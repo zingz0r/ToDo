@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToDo.Persistence.Repositories;
 using ToDo.Persistence.TransactionManager;
-using ToDo.Tests.RepositoryTestsData;
+using ToDo.Tests.Helpers.Repository;
 using Xunit;
 
 namespace ToDo.Tests
