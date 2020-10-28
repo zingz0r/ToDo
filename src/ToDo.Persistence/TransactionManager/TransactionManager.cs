@@ -46,6 +46,8 @@ namespace ToDo.Persistence.TransactionManager
             if (_transaction != null && _transaction.IsActive)
             {
                 _logger.Verbose("{manager} rolled back the transaction", GetType().Name);
+                await _session.FlushAsync(ct).ConfigureAwait(false);
+                _session.Clear();
                 await _transaction.RollbackAsync(ct).ConfigureAwait(false);
             }
         }
