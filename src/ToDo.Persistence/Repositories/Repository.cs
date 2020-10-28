@@ -79,6 +79,9 @@ namespace ToDo.Persistence.Repositories
 
             var query = _session.Query<TEntity>().Where(predicate);
 
+            query = query.OrderByDescending(orderBy);
+
+
             if (skip > 0)
             {
                 query = query.Skip(skip);
@@ -88,8 +91,6 @@ namespace ToDo.Persistence.Repositories
             {
                 query = query.Take(max);
             }
-
-            query = query.OrderByDescending(orderBy);
 
             var res = await query.ToListAsync(ct);
 
