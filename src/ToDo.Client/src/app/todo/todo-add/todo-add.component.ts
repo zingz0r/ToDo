@@ -8,13 +8,13 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class ToDoAddComponent implements OnInit {
 
-  constructor() { }
-
   @Output() addEvent = new EventEmitter<string>();
 
   addForm = new FormGroup({
     task: new FormControl(),
   });
+  
+  constructor() { }
 
   ngOnInit(): void {
   }

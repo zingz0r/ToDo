@@ -16,8 +16,6 @@ interface State {
 })
 export class ToDoSearchComponent implements OnInit {
 
-  constructor() { }
-
   @Output() searchEvent = new EventEmitter<SearchModel>();
 
   selectedState = ToDoState.Any;
@@ -32,6 +30,8 @@ export class ToDoSearchComponent implements OnInit {
     pattern: new FormControl(),
     state: new FormControl(),
   });
+
+  constructor() { }
 
   ngOnInit(): void {
   }

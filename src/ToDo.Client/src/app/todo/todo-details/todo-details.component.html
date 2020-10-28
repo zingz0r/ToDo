@@ -15,7 +15,7 @@
     <ng-container matColumnDef="operations">
         <mat-header-cell *matHeaderCellDef >Operations</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary">
+            <button mat-icon-button color="primary" (click)="onEdit(element)">
                 <mat-icon>edit</mat-icon>
             </button>
             <button mat-icon-button color="warn">

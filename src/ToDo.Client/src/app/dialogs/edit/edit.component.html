@@ -1,0 +1,29 @@
+<form [formGroup]="form" fxLayout="column" fxLayoutGap="20px" (ngSubmit)="onOKClick()">
+    <h2>{{ data.title }}</h2>
+
+    <mat-form-field appearance="fill" fxFlex>
+        <mat-label>{{ data.label }}</mat-label>
+
+        <input matInput type="text" name="text" formControlName="value" />
+
+        <mat-hint>{{ data.hint }}</mat-hint>
+        <mat-error *ngIf="this.form.get('value')?.errors?.required">
+            {{ data.requiredError }}
+        </mat-error>
+        <mat-error *ngIf="this.form.get('value')?.errors?.minlength">
+            {{ data.lengthError }}
+        </mat-error>
+    </mat-form-field>
+
+    <div fxLayout="row" fxLayoutGap="10px">
+        <button mat-raised-button id="dialogCancel" (click)="onCancelClick()" type="button" fxFlex>
+            <mat-icon>{{ data.noIcon }}</mat-icon>
+            {{ data.noCaption }}
+        </button>
+        <button mat-raised-button type="submit" [disabled]="form.invalid" color="primary"
+            (click)="onOKClick()" fxFlex>
+            <mat-icon>{{ data.yesIcon }}</mat-icon>
+            {{ data.yesCaption }}
+        </button>
+    </div>
+</form>

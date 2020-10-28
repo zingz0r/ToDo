@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToDoModel } from 'src/app/models/todo.model';
 
@@ -9,19 +9,26 @@ import { ToDoModel } from 'src/app/models/todo.model';
 })
 export class ToDoDetailsComponent implements OnInit {
 
-  constructor() { }
-
   get toDoItems(): ToDoModel[] {
-      return this.datasource.data;
+    return this.datasource.data;
   }
   @Input() set toDoItems(value: ToDoModel[]) {
-      this.datasource.data = value;
+    this.datasource.data = value;
   }
+
+  @Output() editEvent = new EventEmitter<ToDoModel>();
 
   datasource = new MatTableDataSource<ToDoModel>();
   displayedColumns: string[] = ['isfinished', 'task', 'operations'];
 
+  constructor() { }
+
   ngOnInit(): void {
+  }
+
+  onEdit(model: ToDoModel): void
+  {
+    this.editEvent.emit(model);
   }
 
 }

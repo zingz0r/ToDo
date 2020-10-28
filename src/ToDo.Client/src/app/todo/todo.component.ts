@@ -1,8 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SearchModel } from 'src/app/models/search.model';
 import { SignalRService } from 'src/app/services/signalr.service';
 import { ToDoService } from 'src/app/services/todo.service';
 import { ToDoState } from 'src/common/todostate';
+import { EditDialogComponent } from '../dialogs/edit/edit.component';
+import { TextEditDialogConfig } from '../dialogs/edit/edit.model';
 import { ToDoModel } from '../models/todo.model';
 import { ToDoAdded } from '../signals/todo.signals';
 
@@ -14,14 +17,18 @@ import { ToDoAdded } from '../signals/todo.signals';
 export class ToDoComponent implements OnInit, OnDestroy {
 
   filterState = ToDoState.Any;
+  editDialogRef: MatDialogRef<EditDialogComponent, any>;
+  toDoItems: ToDoModel[];
 
-  constructor(private todoService: ToDoService, private signalRService: SignalRService) {
+  constructor(
+    private todoService: ToDoService,
+    private signalRService: SignalRService,
+    private dialog: MatDialog
+  ) {
     this.todoService.Search('*', ToDoState.Any, (res: ToDoModel[]) => {
       this.toDoItems = res;
     });
   }
-
-  toDoItems: ToDoModel[];
 
   ngOnInit(): void {
     this.signalRService.startConnection().then(() => {
@@ -43,9 +50,25 @@ export class ToDoComponent implements OnInit, OnDestroy {
     this.signalRService.stopConnection();
   }
 
-  onAdd(event: string): void
-  {
-    this.todoService.Add({task: event});
+  onAdd(event: string): void {
+    this.todoService.Add({ task: event });
+  }
+
+  onEdit(event: ToDoModel): void {
+    this.editDialogRef = this.dialog.open(EditDialogComponent, {
+      width: '500px',
+      data: new TextEditDialogConfig(
+        {
+          title: 'Edit Task',
+          initialText: event.task
+        })
+    });
+    this.editDialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.table(event);
+        console.table(result);
+      }
+    });
   }
 
   onSearch(event: SearchModel): void {
