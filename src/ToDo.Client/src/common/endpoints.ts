@@ -3,6 +3,7 @@ export class Endpoint{
         public static readonly Base = 'ToDo';
         public static readonly Search = 'Search';
         public static readonly Modify = 'Modify';
+        public static readonly Finish = 'Finish';
     };
 }
 

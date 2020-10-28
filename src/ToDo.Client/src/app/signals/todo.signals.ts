@@ -32,3 +32,14 @@ export class ToDoDeleted extends SignalBase {
         super(SignalBase.ToDoDeleted);
     }
 }
+
+export class ToDoFinished extends SignalBase {
+    id: string;
+    isFinished: boolean;
+    task: string;
+    created: Date;
+
+    constructor() {
+        super(SignalBase.ToDoFinished);
+    }
+}

@@ -17,6 +17,7 @@ export class ToDoDetailsComponent implements OnInit {
   }
 
   @Output() editEvent = new EventEmitter<ToDoModel>();
+  @Output() deleteEvent = new EventEmitter<ToDoModel>();
   @Output() finishedEvent = new EventEmitter<ToDoModel>();
 
   datasource = new MatTableDataSource<ToDoModel>();
@@ -33,6 +34,12 @@ export class ToDoDetailsComponent implements OnInit {
 
   onDelete(model: ToDoModel): void {
     this.deleteEvent.emit(model);
+  }
+
+  onFinish(model: ToDoModel): void {
+    if (!model.isFinished) {
+      this.finishedEvent.emit(model);
+    }
   }
 
 }

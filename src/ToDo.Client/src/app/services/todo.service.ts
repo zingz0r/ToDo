@@ -46,6 +46,15 @@ export class ToDoService {
             });
     }
 
+    public Finish(id: string): void {
+        this.http
+            .patch(`${this.baseUrl}/${Endpoint.ToDo.Base}/${Endpoint.ToDo.Finish}/${id}`, null)
+            .toPromise()
+            .catch((reason) => {
+                this.alertService.error(reason.message);
+            });
+    }
+
     public Search(pattern: string, state: ToDoState, then: (res: ToDoModel[]) => void): void {
         this.http
             .get<ToDoModel[]>(`${this.baseUrl}/${Endpoint.ToDo.Base}/${Endpoint.ToDo.Search}/${pattern}/${state}`)

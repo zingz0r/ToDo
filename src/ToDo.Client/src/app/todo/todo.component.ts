@@ -9,7 +9,7 @@ import { ConfirmDialogConfig } from '../dialogs/confirm/confirm.model';
 import { EditDialogComponent } from '../dialogs/edit/edit.component';
 import { TextEditDialogConfig } from '../dialogs/edit/edit.model';
 import { ToDoModel } from '../models/todo.model';
-import { ToDoAdded, ToDoDeleted, ToDoModified } from '../signals/todo.signals';
+import { ToDoAdded, ToDoDeleted, ToDoFinished, ToDoModified } from '../signals/todo.signals';
 
 @Component({
   selector: 'app-todo',
@@ -71,6 +71,18 @@ export class ToDoComponent implements OnInit, OnDestroy {
             this.toDoItems = this.toDoItems.splice(0, this.toDoItems.length);
           }
         });
+
+      this.signalRService.startListeningTo(
+        ToDoFinished,
+        (signal) => this.filterState === ToDoState.Any ||
+          this.filterState === ToDoState.Finished && signal.isFinished ||
+          this.filterState === ToDoState.Ongoing && !signal.isFinished,
+        (signal) => {
+          const item = this.toDoItems.find(x => x.id === signal.id);
+          if (item) {
+            item.isFinished = signal.isFinished;
+          }
+        });
     });
   }
 
@@ -78,6 +90,7 @@ export class ToDoComponent implements OnInit, OnDestroy {
     this.signalRService.stopListeningTo(ToDoAdded);
     this.signalRService.stopListeningTo(ToDoModified);
     this.signalRService.stopListeningTo(ToDoDeleted);
+    this.signalRService.stopListeningTo(ToDoFinished);
     this.signalRService.stopConnection();
   }
 
@@ -115,6 +128,10 @@ export class ToDoComponent implements OnInit, OnDestroy {
         this.todoService.Delete(event.id);
       }
     });
+  }
+
+  onFinish(event: ToDoModel): void {
+    this.todoService.Finish(event.id);
   }
 
   onSearch(event: SearchModel): void {

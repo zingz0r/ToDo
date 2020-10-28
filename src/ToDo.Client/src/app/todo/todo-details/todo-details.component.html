@@ -3,7 +3,7 @@
     <ng-container matColumnDef="isfinished">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-checkbox color="primary" [checked]="element.isFinished"></mat-checkbox>
+            <mat-checkbox color="primary" [checked]="element.isFinished" (click)="$event.preventDefault(); onFinish(element)"></mat-checkbox>
         </mat-cell>
       </ng-container>
 
