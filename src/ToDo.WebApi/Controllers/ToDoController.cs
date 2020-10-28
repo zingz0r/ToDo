@@ -95,13 +95,13 @@ namespace ToDo.WebApi.Controllers
         }
 
         [HttpPatch("Modify/{id}")]
-        public async Task ModifyAsync([FromBody] ModifyToDoModel modifyModel, CancellationToken cancellationToken)
+        public async Task ModifyAsync(Guid id, [FromBody] ModifyToDoModel modifyModel, CancellationToken cancellationToken)
         {
             var modifications = await _toDoRepository.QueryAsync(async () =>
             {
-                _logger.Information("Modifying todo item's text with id: '{id}'", modifyModel.Id);
+                _logger.Information("Modifying todo item's text with id: '{id}'", id);
 
-                return await _toDoRepository.ModifyAsync(x => x.Id == modifyModel.Id, y => y.Task = modifyModel.Task, cancellationToken).ConfigureAwait(false);
+                return await _toDoRepository.ModifyAsync(x => x.Id == id, y => y.Task = modifyModel.Task, cancellationToken).ConfigureAwait(false);
             }, cancellationToken).ConfigureAwait(false);
 
             foreach (var modification in modifications)

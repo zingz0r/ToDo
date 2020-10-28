@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 import { ToDoModel } from 'src/app/models/todo.model';
 import { ToDoState } from 'src/common/todostate';
 import { AddToDoModel } from 'src/app/models/addtodo.model';
+import { ModifyToDoModel } from 'src/app/models/modifytodo.model';
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +22,15 @@ export class ToDoService {
     public Add(task: AddToDoModel): void {
         this.http
             .post<AddToDoModel>(`${this.baseUrl}/${Endpoint.ToDo.Base}`, task)
+            .toPromise()
+            .catch((reason) => {
+                this.alertService.error(reason.message);
+            });
+    }
+
+    public Modify(id: string, model: ModifyToDoModel): void {
+        this.http
+            .patch<ModifyToDoModel>(`${this.baseUrl}/${Endpoint.ToDo.Base}/${Endpoint.ToDo.Modify}/${id}`, model)
             .toPromise()
             .catch((reason) => {
                 this.alertService.error(reason.message);

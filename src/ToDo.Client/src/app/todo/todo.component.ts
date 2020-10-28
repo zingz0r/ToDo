@@ -6,8 +6,9 @@ import { ToDoService } from 'src/app/services/todo.service';
 import { ToDoState } from 'src/common/todostate';
 import { EditDialogComponent } from '../dialogs/edit/edit.component';
 import { TextEditDialogConfig } from '../dialogs/edit/edit.model';
+import { ModifyToDoModel } from '../models/modifytodo.model';
 import { ToDoModel } from '../models/todo.model';
-import { ToDoAdded } from '../signals/todo.signals';
+import { ToDoAdded, ToDoModified } from '../signals/todo.signals';
 
 @Component({
   selector: 'app-todo',
@@ -42,11 +43,24 @@ export class ToDoComponent implements OnInit, OnDestroy {
           this.toDoItems.sort((a, b) => +new Date(b.created) - +new Date(a.created));
           this.toDoItems = this.toDoItems.splice(0, this.toDoItems.length);
         });
+
+      this.signalRService.startListeningTo(
+        ToDoModified,
+        (signal) => this.filterState === ToDoState.Any ||
+          this.filterState === ToDoState.Finished && signal.isFinished ||
+          this.filterState === ToDoState.Ongoing && !signal.isFinished,
+        (signal) => {
+          const item = this.toDoItems.find(x => x.id === signal.id);
+          if (item) {
+            item.task = signal.task;
+          }
+        });
     });
   }
 
   ngOnDestroy(): void {
     this.signalRService.stopListeningTo(ToDoAdded);
+    this.signalRService.stopListeningTo(ToDoModified);
     this.signalRService.stopConnection();
   }
 
@@ -64,9 +78,8 @@ export class ToDoComponent implements OnInit, OnDestroy {
         })
     });
     this.editDialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.table(event);
-        console.table(result);
+      if (result && result !== event.task) {
+        this.todoService.Modify(event.id, { task: result });
       }
     });
   }
