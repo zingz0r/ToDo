@@ -37,6 +37,15 @@ export class ToDoService {
             });
     }
 
+    public Delete(id: string): void {
+        this.http
+            .delete(`${this.baseUrl}/${Endpoint.ToDo.Base}/${id}`)
+            .toPromise()
+            .catch((reason) => {
+                this.alertService.error(reason.message);
+            });
+    }
+
     public Search(pattern: string, state: ToDoState, then: (res: ToDoModel[]) => void): void {
         this.http
             .get<ToDoModel[]>(`${this.baseUrl}/${Endpoint.ToDo.Base}/${Endpoint.ToDo.Search}/${pattern}/${state}`)

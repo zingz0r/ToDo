@@ -1,0 +1,17 @@
+<h2>{{ data.title }}</h2>
+
+<div fxLayout="column" fxLayoutGap="10px">
+    <div>
+        {{ data.message }}
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px">
+        <button mat-raised-button id="dialogCancel" (click)="onCancelClick()" type="button" fxFlex>
+            <mat-icon>{{ data.noIcon }}</mat-icon>
+            {{ data.noCaption }}
+        </button>
+        <button mat-raised-button type="submit" color="primary" (click)="onOKClick()" fxFlex>
+            <mat-icon>{{ data.yesIcon }}</mat-icon>
+            {{ data.yesCaption }}
+        </button>
+    </div>
+</div>

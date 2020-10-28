@@ -3,5 +3,5 @@
         <app-todo-search (searchEvent)="onSearch($event)"></app-todo-search>
         <app-todo-add (addEvent)="onAdd($event)" fxFlex></app-todo-add>
     </div>
-    <app-todo-details [toDoItems]="toDoItems" (editEvent)="onEdit($event)"></app-todo-details>
+    <app-todo-details [toDoItems]="toDoItems" (editEvent)="onEdit($event)" (deleteEvent)="onDelete($event)"></app-todo-details>
 </div>

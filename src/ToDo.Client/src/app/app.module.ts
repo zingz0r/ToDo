@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './alert/alert.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ConfirmDialogComponent } from './dialogs/confirm/confirm.component';
 import { EditDialogComponent } from './dialogs/edit/edit.component';
 import { ToolbarComponent } from './layout/toolbar/toolbar.component';
 import { ToDoComponent } from './todo/todo.component';
@@ -31,6 +32,7 @@ import { ToDoAddComponent } from './todo/todo-add/todo-add.component';
   declarations: [
     AlertComponent,
     AppComponent,
+    ConfirmDialogComponent,
     EditDialogComponent,
     ToolbarComponent,
     ToDoComponent,

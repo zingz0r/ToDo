@@ -17,6 +17,7 @@ export class ToDoDetailsComponent implements OnInit {
   }
 
   @Output() editEvent = new EventEmitter<ToDoModel>();
+  @Output() finishedEvent = new EventEmitter<ToDoModel>();
 
   datasource = new MatTableDataSource<ToDoModel>();
   displayedColumns: string[] = ['isfinished', 'task', 'operations'];
@@ -26,9 +27,12 @@ export class ToDoDetailsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onEdit(model: ToDoModel): void
-  {
+  onEdit(model: ToDoModel): void {
     this.editEvent.emit(model);
+  }
+
+  onDelete(model: ToDoModel): void {
+    this.deleteEvent.emit(model);
   }
 
 }

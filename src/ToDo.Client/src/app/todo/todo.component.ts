@@ -4,11 +4,12 @@ import { SearchModel } from 'src/app/models/search.model';
 import { SignalRService } from 'src/app/services/signalr.service';
 import { ToDoService } from 'src/app/services/todo.service';
 import { ToDoState } from 'src/common/todostate';
+import { ConfirmDialogComponent } from '../dialogs/confirm/confirm.component';
+import { ConfirmDialogConfig } from '../dialogs/confirm/confirm.model';
 import { EditDialogComponent } from '../dialogs/edit/edit.component';
 import { TextEditDialogConfig } from '../dialogs/edit/edit.model';
-import { ModifyToDoModel } from '../models/modifytodo.model';
 import { ToDoModel } from '../models/todo.model';
-import { ToDoAdded, ToDoModified } from '../signals/todo.signals';
+import { ToDoAdded, ToDoDeleted, ToDoModified } from '../signals/todo.signals';
 
 @Component({
   selector: 'app-todo',
@@ -18,8 +19,10 @@ import { ToDoAdded, ToDoModified } from '../signals/todo.signals';
 export class ToDoComponent implements OnInit, OnDestroy {
 
   filterState = ToDoState.Any;
-  editDialogRef: MatDialogRef<EditDialogComponent, any>;
   toDoItems: ToDoModel[];
+
+  editDialogRef: MatDialogRef<EditDialogComponent, any>;
+  confirmDialogRef: MatDialogRef<ConfirmDialogComponent, any>;
 
   constructor(
     private todoService: ToDoService,
@@ -55,12 +58,26 @@ export class ToDoComponent implements OnInit, OnDestroy {
             item.task = signal.task;
           }
         });
+
+      this.signalRService.startListeningTo(
+        ToDoDeleted,
+        (signal) => this.filterState === ToDoState.Any ||
+          this.filterState === ToDoState.Finished && signal.isFinished ||
+          this.filterState === ToDoState.Ongoing && !signal.isFinished,
+        (signal) => {
+          const index = this.toDoItems.findIndex(x => x.id === signal.id);
+          if (index > -1) {
+            this.toDoItems.splice(index, 1);
+            this.toDoItems = this.toDoItems.splice(0, this.toDoItems.length);
+          }
+        });
     });
   }
 
   ngOnDestroy(): void {
     this.signalRService.stopListeningTo(ToDoAdded);
     this.signalRService.stopListeningTo(ToDoModified);
+    this.signalRService.stopListeningTo(ToDoDeleted);
     this.signalRService.stopConnection();
   }
 
@@ -80,6 +97,22 @@ export class ToDoComponent implements OnInit, OnDestroy {
     this.editDialogRef.afterClosed().subscribe((result) => {
       if (result && result !== event.task) {
         this.todoService.Modify(event.id, { task: result });
+      }
+    });
+  }
+
+  onDelete(event: ToDoModel): void {
+    this.confirmDialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: new ConfirmDialogConfig(
+        {
+          title: 'Delete Task',
+          message: `Are you sure you want delete the following task: \'${event.task}\'`
+        })
+    });
+    this.confirmDialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.todoService.Delete(event.id);
       }
     });
   }
