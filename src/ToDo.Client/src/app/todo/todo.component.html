@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutGap="40px">
         <app-todo-search (searchEvent)="onSearch($event)"></app-todo-search>
-        <app-todo-add fxFlex></app-todo-add>
+        <app-todo-add (addEvent)="onAdd($event)" fxFlex></app-todo-add>
     </div>
     <app-todo-details [toDoItems]="toDoItems"></app-todo-details>
 </div>

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-todo-add',
@@ -9,7 +10,16 @@ export class ToDoAddComponent implements OnInit {
 
   constructor() { }
 
+  @Output() addEvent = new EventEmitter<string>();
+
+  addForm = new FormGroup({
+    task: new FormControl(),
+  });
+
   ngOnInit(): void {
   }
 
+  onAdd(): void {
+    this.addEvent.emit(this.addForm.value.task);
+  }
 }

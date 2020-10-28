@@ -1,8 +1,8 @@
 <h2>Add Task</h2>
-<form>
+<form [formGroup]="addForm" (ngSubmit)="onAdd()" fxLayout="row" fxLayoutGap="20px">
     <mat-form-field appearance="fill" fxFlex>
         <mat-label>Add Task</mat-label>
-        <input matInput placeholder="Task to do"/>
+        <input matInput placeholder="Task to do" formControlName="task"/>
         <mat-icon matSuffix>note_add</mat-icon>
         <mat-hint>Define task</mat-hint>
     </mat-form-field>

@@ -43,6 +43,11 @@ export class ToDoComponent implements OnInit, OnDestroy {
     this.signalRService.stopConnection();
   }
 
+  onAdd(event: string): void
+  {
+    this.todoService.Add({task: event});
+  }
+
   onSearch(event: SearchModel): void {
     this.todoService.Search(event.pattern, event.state, (res: ToDoModel[]) => {
       this.toDoItems = res;
