@@ -45,6 +45,14 @@ namespace ToDo.Persistence.Repositories
             Expression<Func<TEntity, TKey>> orderBy, CancellationToken ct, int max = -1, int skip = -1);
 
         /// <summary>
+        /// Count all items matching predicate
+        /// </summary>
+        /// <param name="predicate">Filter expression</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns></returns>
+        Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct);
+
+        /// <summary>
         /// Modify multiple items in the db asynchronously
         /// </summary>
         /// <param name="predicate">Predicate to select items</param>

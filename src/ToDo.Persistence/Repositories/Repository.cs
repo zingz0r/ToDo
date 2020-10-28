@@ -12,7 +12,7 @@ using ToDo.Persistence.TransactionManager;
 
 namespace ToDo.Persistence.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity>
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly ISession _session;
         private readonly ILogger _logger;
@@ -94,6 +94,19 @@ namespace ToDo.Persistence.Repositories
             var res = await query.ToListAsync(ct);
 
             return res;
+        }
+
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct)
+        {
+
+            _txManager.EnsureTransactionIsAlive();
+
+            _logger.Verbose("{function} Counting items with [Predicate({@predicate})]",
+                $"{GetInterfaceName()}.{nameof(ModifyAsync)}", predicate.ToReadableString());
+
+            return await _session.Query<TEntity>()
+                .Where(predicate)
+                .Select(x => x).CountAsync(ct);
         }
 
         /// <inheritdoc />

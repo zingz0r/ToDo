@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ToDo.Api.Enumerators;
@@ -36,25 +37,39 @@ namespace ToDo.WebApi.Controllers
         }
 
 
-        [HttpGet("Search/{pattern}/{state}")]
-        public async Task<IEnumerable<ToDoModel>> SearchAsync(string pattern, ToDoState state, CancellationToken cancellationToken)
+        [HttpGet("Search/{pattern}/{state}/{page}")]
+        public async Task<PaginatedResult<IEnumerable<ToDoModel>>> SearchAsync(string pattern, ToDoState state, int? page, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(pattern) || pattern == "*")
             {
                 pattern = "";
             }
 
-            var items = await _toDoRepository.QueryAsync(async () =>
+            if (page == null)
             {
-                return await _toDoRepository.GetAsync(x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()) && state == ToDoState.Any ||
-                                                           (state == ToDoState.Finished ? x.IsFinished : state == ToDoState.Ongoing && !x.IsFinished),
-                    y => y.Created, cancellationToken).ConfigureAwait(false);
+                page = 0;
+            }
+
+            Expression<Func<ToDoEntity, bool>> filter = x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()) && state == ToDoState.Any ||
+                (state == ToDoState.Finished ? x.IsFinished : state == ToDoState.Ongoing && !x.IsFinished);
+
+            var (count, items) = await _toDoRepository.QueryAsync(async () =>
+            {
+                var ct = await _toDoRepository.CountAsync(filter, cancellationToken);
+                var dt = await _toDoRepository.GetAsync(filter, y => y.Created, cancellationToken, 25, page.Value * 25).ConfigureAwait(false);
+
+                return (ct, dt);
 
             }, cancellationToken).ConfigureAwait(false);
 
             _logger.Information("Found todo items matching pattern: '{pattern}', items: {@items}", pattern, items);
 
-            return _mapper.Map<IEnumerable<ToDoModel>>(items);
+            return new PaginatedResult<IEnumerable<ToDoModel>>
+            {
+                AllPage = count / 25,
+                Page = page.Value,
+                Result = _mapper.Map<IEnumerable<ToDoModel>>(items)
+            };
         }
 
         [HttpPost]
