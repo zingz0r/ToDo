@@ -74,9 +74,7 @@ export class ToDoComponent implements OnInit, OnDestroy {
 
       this.signalRService.startListeningTo(
         ToDoFinished,
-        (signal) => this.filterState === ToDoState.Any ||
-          this.filterState === ToDoState.Finished && signal.isFinished ||
-          this.filterState === ToDoState.Ongoing && !signal.isFinished,
+        (signal) => true,
         (signal) => {
           const item = this.toDoItems.find(x => x.id === signal.id);
           if (item) {
