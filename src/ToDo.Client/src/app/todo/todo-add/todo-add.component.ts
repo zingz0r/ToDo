@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-todo-add',
@@ -10,11 +10,15 @@ export class ToDoAddComponent implements OnInit {
 
   @Output() addEvent = new EventEmitter<string>();
 
-  addForm = new FormGroup({
-    task: new FormControl(),
-  });
-  
-  constructor() { }
+  addForm: FormGroup;
+
+  placeBetForm: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) {
+    this.addForm = this.formBuilder.group({
+      task: ['', [Validators.required, Validators.min(1)]]
+    });
+   }
 
   ngOnInit(): void {
   }

@@ -132,6 +132,7 @@ export class ToDoComponent implements OnInit, OnDestroy {
       data: new TextEditDialogConfig(
         {
           title: 'Edit Task',
+          requiredError: 'Task description is required.',
           initialText: event.task
         })
     });

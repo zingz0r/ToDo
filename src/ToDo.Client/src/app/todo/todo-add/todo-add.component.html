@@ -1,9 +1,19 @@
 <h2>Add Task</h2>
-<form [formGroup]="addForm" (ngSubmit)="onAdd()" fxLayout="row" fxLayoutGap="20px">
+<form [formGroup]="addForm" (ngSubmit)="addForm.valid && onAdd()" fxLayout="row" fxLayoutGap="20px">
     <mat-form-field appearance="fill" fxFlex>
         <mat-label>Add Task</mat-label>
-        <input matInput placeholder="Task to do" formControlName="task"/>
+        <input matInput placeholder="Task to do" formControlName="task" />
         <mat-icon matSuffix>note_add</mat-icon>
         <mat-hint>Define task</mat-hint>
+        <mat-error *ngIf="
+            addForm.controls.task.invalid &&
+            addForm.controls.task.errors?.required">
+            Task description is required.
+        </mat-error>
+        <mat-error *ngIf="
+            addForm.controls.task.invalid && 
+            addForm.controls.task.errors?.min">
+            Task description must be larger than 0.
+        </mat-error>
     </mat-form-field>
 </form>
