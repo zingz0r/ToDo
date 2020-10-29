@@ -2,7 +2,7 @@
 <form [formGroup]="searchForm" (ngSubmit)="onSearch()" fxLayout="row" fxLayoutGap="20px">
   <mat-form-field appearance="fill">
     <mat-label>Task</mat-label>
-    <input matInput placeholder="" formControlName="pattern" />
+    <input matInput placeholder="" (input)="onSearch()" formControlName="pattern" />
     <mat-hint>Search for text in tasks</mat-hint>
   </mat-form-field>
   <mat-form-field appearance="fill">
