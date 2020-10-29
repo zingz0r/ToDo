@@ -67,7 +67,7 @@ namespace ToDo.WebApi.Controllers
 
             return new PaginatedResult<ToDoModel>
             {
-                AllPage = count / 25,
+                AllPage = (int)Math.Ceiling(count / 25.0),
                 Page = page.Value,
                 Result = _mapper.Map<IEnumerable<ToDoModel>>(items)
             };

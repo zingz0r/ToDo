@@ -54,7 +54,7 @@ export class ToDoComponent implements OnInit, OnDestroy {
 
         this.todoService.Search(this.searchPattern, this.filterState, this.currentPageNumber, (res: PaginatedResult<ToDoModel>) => {
           this.toDoItems = res.result;
-          this.pagesNumber = res.allPage + 1;
+          this.pagesNumber = res.allPage;
         });
       }
     });
