@@ -1,29 +1,30 @@
 <h2>Details</h2>
 <mat-table [dataSource]="datasource" fxFill class="mat-elevation-z3">
-    <ng-container matColumnDef="isfinished">
-        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-checkbox color="primary" [checked]="element.isFinished" (click)="$event.preventDefault(); onFinish(element)"></mat-checkbox>
-        </mat-cell>
-      </ng-container>
+  <ng-container matColumnDef="isfinished">
+    <mat-header-cell fxFlex="1 0 auto" *matHeaderCellDef></mat-header-cell>
+    <mat-cell fxFlex="1 0 auto" *matCellDef="let element">
+      <mat-checkbox color="primary" [checked]="element.isFinished" (click)="$event.preventDefault(); onFinish(element)">
+      </mat-checkbox>
+    </mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="task">
-      <mat-header-cell *matHeaderCellDef>Task</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element.task }}</mat-cell>
-    </ng-container>
-  
-    <ng-container matColumnDef="operations">
-        <mat-header-cell *matHeaderCellDef >Operations</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="onEdit(element)">
-                <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="onDelete(element)">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </mat-cell>
-      </ng-container>
+  <ng-container matColumnDef="task">
+    <mat-header-cell fxflex="8 1 auto" *matHeaderCellDef>Task</mat-header-cell>
+    <mat-cell fxflex="8 1 auto" *matCellDef="let element">{{ element.task }}</mat-cell>
+  </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  <ng-container matColumnDef="operations">
+    <mat-header-cell fxFlex="1 0 auto" *matHeaderCellDef>Operations</mat-header-cell>
+    <mat-cell fxFlex="1 0 auto" *matCellDef="let element">
+      <button mat-icon-button (click)="onEdit(element)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="onDelete(element)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 </mat-table>

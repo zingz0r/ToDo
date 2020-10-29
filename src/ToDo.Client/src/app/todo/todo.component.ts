@@ -58,7 +58,7 @@ export class ToDoComponent implements OnInit, OnDestroy {
         this.todoService.Search(this.searchPattern, this.filterState, this.currentPageNumber, (res: PaginatedResult<ToDoModel>) => {
           this.toDoItems = res.result;
           this.pagesNumber = res.allPage;
-          this.isLoading  = false;
+          this.isLoading = false;
         });
       }
     });
@@ -74,6 +74,11 @@ export class ToDoComponent implements OnInit, OnDestroy {
         (signal) => {
           this.toDoItems.push({ id: signal.id, isFinished: signal.isFinished, created: signal.created, task: signal.task });
           this.toDoItems.sort((a, b) => +new Date(b.created) - +new Date(a.created));
+
+          if (this.toDoItems.length > 25) {
+            this.toDoItems.splice(25, this.toDoItems.length - 25)
+          }
+
           this.toDoItems = this.toDoItems.splice(0, this.toDoItems.length);
         });
 
