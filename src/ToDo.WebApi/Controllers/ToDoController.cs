@@ -65,12 +65,10 @@ namespace ToDo.WebApi.Controllers
 
             _logger.Information("Found todo items matching pattern: '{pattern}', items: {@items}", pattern, items);
 
-            return new PaginatedResult<ToDoModel>
-            {
-                AllPage = (int)Math.Ceiling(count / 25.0),
-                Page = page.Value,
-                Result = _mapper.Map<IEnumerable<ToDoModel>>(items)
-            };
+            return new PaginatedResult<ToDoModel>(
+                result: _mapper.Map<IReadOnlyList<ToDoModel>>(items),
+                page: page.Value,
+                allPage: (int)Math.Ceiling(count / 25.0));
         }
 
         [HttpPost]
