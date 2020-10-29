@@ -27,6 +27,8 @@ export class ToDoComponent implements OnInit, OnDestroy {
   pagesNumber: number;
   currentPageNumber: number;
 
+  isLoading: boolean;
+
   toDoItems: ToDoModel[];
 
   editDialogRef: MatDialogRef<EditDialogComponent, any>;
@@ -52,9 +54,11 @@ export class ToDoComponent implements OnInit, OnDestroy {
         const pattern = activatedRoute.snapshot.queryParamMap.get('pattern');
         this.searchPattern = pattern ? pattern : '*';
 
+        this.isLoading = true;
         this.todoService.Search(this.searchPattern, this.filterState, this.currentPageNumber, (res: PaginatedResult<ToDoModel>) => {
           this.toDoItems = res.result;
           this.pagesNumber = res.allPage;
+          this.isLoading  = false;
         });
       }
     });

@@ -4,7 +4,8 @@
         </app-todo-search>
         <app-todo-add (addEvent)="onAdd($event)" fxFlex></app-todo-add>
     </div>
-    <app-todo-details [toDoItems]="toDoItems" (finishedEvent)="onFinish($event)" (editEvent)="onEdit($event)"
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+    <app-todo-details *ngIf="!isLoading" [toDoItems]="toDoItems" (finishedEvent)="onFinish($event)" (editEvent)="onEdit($event)"
         (deleteEvent)="onDelete($event)">
     </app-todo-details>
 
