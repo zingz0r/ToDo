@@ -107,6 +107,53 @@ namespace ToDo.Tests
             result.First().Should().BeEquivalentTo(test);
         }
 
+        [Fact(DisplayName = "Counting items in empty db")]
+        public async Task EmptyDb_Count_Zero()
+        {
+            var test = new TestEntity
+            {
+                Name = "Test",
+                Color = "Blue",
+                Id = Guid.NewGuid()
+            };
+
+            var dataInDb = await _testRepo.QueryAsync(async () =>
+            {
+                return await _testRepo.CountAsync(x => x.Id == test.Id, default);
+
+            }, default);
+
+
+            dataInDb.Should().Be(0);
+        }
+
+        [Fact(DisplayName = "Counting items in non-empty db")]
+        public async Task ItemsInDb_Count_Zero()
+        {
+
+            await _testRepo.ExecuteAsync(async () =>
+            {
+                await _testRepo.AddAsync(new TestEntity
+                {
+                    Name = "Test",
+                    Color = "Blue",
+                    Id = Guid.NewGuid()
+                }, default);
+            }, default);
+
+            var (red, blue) = await _testRepo.QueryAsync(async () =>
+            {
+                var countBlue = await _testRepo.CountAsync(x => x.Color == "Blue", default);
+                var countRed = await _testRepo.CountAsync(x => x.Color == "Red", default);
+
+                return (countRed, countBlue);
+            }, default);
+
+
+            red.Should().Be(0);
+            blue.Should().Be(1);
+        }
+
         [Fact(DisplayName = "Modifying item in the db")]
         public async Task ItemInDb_Modify_ModifiedItemInDb()
         {
