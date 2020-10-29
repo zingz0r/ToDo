@@ -6,6 +6,6 @@
         <button *ngIf="page !== current" mat-stroked-button (click)="onPageChange(page)">{{page + 1}}</button>
     </ng-container>
     <button mat-stroked-button *ngIf="current < pages.length - 1" (click)="onPageChange(current + 1)">&gt;</button>
-    <button mat-stroked-button *ngIf="current === pages.length - 1" disabled>&gt;</button>
+    <button mat-stroked-button *ngIf="pages.length === 0 || current === pages.length - 1" disabled>&gt;</button>
 
 </div>
