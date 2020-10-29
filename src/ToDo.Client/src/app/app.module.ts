@@ -27,6 +27,7 @@ import { ToDoComponent } from './todo/todo.component';
 import { ToDoDetailsComponent } from './todo/todo-details/todo-details.component';
 import { ToDoSearchComponent } from './todo/todo-search/todo-search.component';
 import { ToDoAddComponent } from './todo/todo-add/todo-add.component';
+import { PaginationComponent } from './pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { ToDoAddComponent } from './todo/todo-add/todo-add.component';
     ToDoDetailsComponent,
     ToDoSearchComponent,
     ToDoAddComponent,
+    PaginationComponent,
   ],
   imports: [
     BrowserModule,

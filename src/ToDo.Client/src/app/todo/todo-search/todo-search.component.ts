@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Output, EventEmitter } from '@angular/core';
 import { SearchModel } from 'src/app/models/search.model';
@@ -16,14 +16,26 @@ interface State {
 })
 export class ToDoSearchComponent implements OnInit {
 
+  @Input() set defaultPattern(value: string) {
+    if (value !== '*') {
+      this.searchForm.get('pattern').setValue(value);
+    }
+  }
+
+  @Input() set defaultState(value: string) {
+    if (value !== '*') {
+      this.selectedState = value;
+    }
+  }
+
   @Output() searchEvent = new EventEmitter<SearchModel>();
 
   selectedState = ToDoState.Any;
 
   todoStates: State[] = [
-    {value: ToDoState.Any, viewValue: ToDoState.Any},
-    {value: ToDoState.Finished, viewValue: ToDoState.Finished},
-    {value: ToDoState.Ongoing, viewValue: ToDoState.Ongoing}
+    { value: ToDoState.Any, viewValue: ToDoState.Any },
+    { value: ToDoState.Finished, viewValue: ToDoState.Finished },
+    { value: ToDoState.Ongoing, viewValue: ToDoState.Ongoing }
   ];
 
   searchForm = new FormGroup({
@@ -37,7 +49,7 @@ export class ToDoSearchComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.searchEvent.emit({pattern: this.searchForm.value.pattern ? this.searchForm.value.pattern : '*', state: this.selectedState});
+    this.searchEvent.emit({ pattern: this.searchForm.value.pattern ? this.searchForm.value.pattern : '*', state: this.selectedState });
   }
 
 }

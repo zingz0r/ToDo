@@ -1,7 +1,12 @@
 <div fxLayout="column" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutGap="40px">
-        <app-todo-search (searchEvent)="onSearch($event)"></app-todo-search>
+        <app-todo-search (searchEvent)="onSearch($event)" [defaultPattern]="searchPattern" [defaultState]="filterState">
+        </app-todo-search>
         <app-todo-add (addEvent)="onAdd($event)" fxFlex></app-todo-add>
     </div>
-    <app-todo-details [toDoItems]="toDoItems" (finishedEvent)="onFinish($event)" (editEvent)="onEdit($event)" (deleteEvent)="onDelete($event)"></app-todo-details>
+    <app-todo-details [toDoItems]="toDoItems" (finishedEvent)="onFinish($event)" (editEvent)="onEdit($event)"
+        (deleteEvent)="onDelete($event)">
+    </app-todo-details>
+
+    <app-pagination [pagesNumber]="pagesNumber" [currentPage]="currentPageNumber" (pageChangeEvent)="onPageChange($event)"></app-pagination>
 </div>

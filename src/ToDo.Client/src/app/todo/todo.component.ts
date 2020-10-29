@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { SearchModel } from 'src/app/models/search.model';
 import { SignalRService } from 'src/app/services/signalr.service';
 import { ToDoService } from 'src/app/services/todo.service';
@@ -8,6 +10,7 @@ import { ConfirmDialogComponent } from '../dialogs/confirm/confirm.component';
 import { ConfirmDialogConfig } from '../dialogs/confirm/confirm.model';
 import { EditDialogComponent } from '../dialogs/edit/edit.component';
 import { TextEditDialogConfig } from '../dialogs/edit/edit.model';
+import { PaginatedResult } from '../models/paginatedresult.model';
 import { ToDoModel } from '../models/todo.model';
 import { ToDoAdded, ToDoDeleted, ToDoFinished, ToDoModified } from '../signals/todo.signals';
 
@@ -18,19 +21,42 @@ import { ToDoAdded, ToDoDeleted, ToDoFinished, ToDoModified } from '../signals/t
 })
 export class ToDoComponent implements OnInit, OnDestroy {
 
-  filterState = ToDoState.Any;
+  filterState: string;
+  searchPattern: string;
+
+  pagesNumber: number;
+  currentPageNumber: number;
+
   toDoItems: ToDoModel[];
 
   editDialogRef: MatDialogRef<EditDialogComponent, any>;
   confirmDialogRef: MatDialogRef<ConfirmDialogComponent, any>;
 
+  navigationSubscription: Subscription;
+
   constructor(
     private todoService: ToDoService,
     private signalRService: SignalRService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    activatedRoute: ActivatedRoute
   ) {
-    this.todoService.Search('*', ToDoState.Any, (res: ToDoModel[]) => {
-      this.toDoItems = res;
+    this.navigationSubscription = this.router.events.subscribe((ev: any) => {
+      if (ev instanceof NavigationEnd) {
+        const page = activatedRoute.snapshot.queryParamMap.get('page');
+        this.currentPageNumber = page ? Number(page) : 0;
+
+        const state = activatedRoute.snapshot.queryParamMap.get('state');
+        this.filterState = state ? state : ToDoState.Any;
+
+        const pattern = activatedRoute.snapshot.queryParamMap.get('pattern');
+        this.searchPattern = pattern ? pattern : '*';
+
+        this.todoService.Search(this.searchPattern, this.filterState, this.currentPageNumber, (res: PaginatedResult<ToDoModel>) => {
+          this.toDoItems = res.result;
+          this.pagesNumber = res.allPage + 1;
+        });
+      }
     });
   }
 
@@ -133,9 +159,10 @@ export class ToDoComponent implements OnInit, OnDestroy {
   }
 
   onSearch(event: SearchModel): void {
-    this.todoService.Search(event.pattern, event.state, (res: ToDoModel[]) => {
-      this.toDoItems = res;
-      this.filterState = event.state;
-    });
+    this.router.navigate(['/'], { queryParams: { pattern: event.pattern, state: event.state, page: 0 }, queryParamsHandling: 'merge' });
+  }
+
+  onPageChange(event: number): void {
+    this.router.navigate(['/'], { queryParams: { pattern: this.searchPattern, state: this.filterState, page: event }, queryParamsHandling: 'merge' });
   }
 }

@@ -38,7 +38,7 @@ namespace ToDo.WebApi.Controllers
 
 
         [HttpGet("Search/{pattern}/{state}/{page}")]
-        public async Task<PaginatedResult<IEnumerable<ToDoModel>>> SearchAsync(string pattern, ToDoState state, int? page, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<ToDoModel>> SearchAsync(string pattern, ToDoState state, int? page, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(pattern) || pattern == "*")
             {
@@ -50,8 +50,9 @@ namespace ToDo.WebApi.Controllers
                 page = 0;
             }
 
-            Expression<Func<ToDoEntity, bool>> filter = x => x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()) && state == ToDoState.Any ||
-                (state == ToDoState.Finished ? x.IsFinished : state == ToDoState.Ongoing && !x.IsFinished);
+            Expression<Func<ToDoEntity, bool>> filter = x =>
+                x.Task.ToLowerInvariant().Contains(pattern.ToLowerInvariant()) &&
+                (state == ToDoState.Any || (state == ToDoState.Finished ? x.IsFinished : state == ToDoState.Ongoing && !x.IsFinished));
 
             var (count, items) = await _toDoRepository.QueryAsync(async () =>
             {
@@ -64,7 +65,7 @@ namespace ToDo.WebApi.Controllers
 
             _logger.Information("Found todo items matching pattern: '{pattern}', items: {@items}", pattern, items);
 
-            return new PaginatedResult<IEnumerable<ToDoModel>>
+            return new PaginatedResult<ToDoModel>
             {
                 AllPage = count / 25,
                 Page = page.Value,

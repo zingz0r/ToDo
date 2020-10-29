@@ -7,6 +7,7 @@ import { ToDoModel } from 'src/app/models/todo.model';
 import { ToDoState } from 'src/common/todostate';
 import { AddToDoModel } from 'src/app/models/addtodo.model';
 import { ModifyToDoModel } from 'src/app/models/modifytodo.model';
+import { PaginatedResult } from 'src/app/models/paginatedresult.model';
 
 @Injectable({
     providedIn: 'root'
@@ -55,9 +56,9 @@ export class ToDoService {
             });
     }
 
-    public Search(pattern: string, state: ToDoState, then: (res: ToDoModel[]) => void): void {
+    public Search(pattern: string, state: ToDoState, page: number, then: (res: PaginatedResult<ToDoModel>) => void): void {
         this.http
-            .get<ToDoModel[]>(`${this.baseUrl}/${Endpoint.ToDo.Base}/${Endpoint.ToDo.Search}/${pattern}/${state}`)
+            .get<PaginatedResult<ToDoModel>>(`${this.baseUrl}/${Endpoint.ToDo.Base}/${Endpoint.ToDo.Search}/${pattern}/${state}/${page}`)
             .toPromise()
             .then((res) => {
                 then(res);
