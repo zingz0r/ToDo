@@ -1,0 +1,11 @@
+<div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+    <button mat-stroked-button *ngIf="current > 0" (click)="onPageChange(current - 1)">&lt;</button>
+    <button mat-stroked-button *ngIf="current === 0" disabled>&lt;</button>
+    <ng-container *ngFor="let page of pages">
+        <button *ngIf="page === current" mat-stroked-button color="primary" disabled>{{page + 1}}</button>
+        <button *ngIf="page !== current" mat-stroked-button (click)="onPageChange(page)">{{page + 1}}</button>
+    </ng-container>
+    <button mat-stroked-button *ngIf="current < pages.length - 1" (click)="onPageChange(current + 1)">&gt;</button>
+    <button mat-stroked-button *ngIf="current === pages.length - 1" disabled>&gt;</button>
+
+</div>
