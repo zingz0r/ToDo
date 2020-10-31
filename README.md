@@ -40,4 +40,4 @@ Simple todo-list app built with asp.net core and angular
 
 ## Running ToDo Tests
 
-To run tests in `ToDoTests.cs` first it is necessary to run the project for example with `CTRL+F5` in vs.
+To run tests in `ToDoE2eTests.cs` first it is necessary to run the project for example with `CTRL+F5` in vs.

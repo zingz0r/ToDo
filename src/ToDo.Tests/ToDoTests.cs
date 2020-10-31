@@ -1,74 +1,96 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Polly;
+﻿using AutoMapper;
+using FluentAssertions;
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
+using Microsoft.AspNetCore.SignalR;
+using Moq;
+using NHibernate;
+using NHibernate.Tool.hbm2ddl;
+using Serilog;
 using System;
-using System.Net.Http;
+using System.Linq;
 using System.Threading.Tasks;
-using ToDo.Api.Models;
-using ToDo.Tests.Extensions;
+using ToDo.Api.Enumerators;
+using ToDo.Persistence.Entities;
+using ToDo.Persistence.Maps;
+using ToDo.Persistence.Profiles;
+using ToDo.Persistence.Repositories;
+using ToDo.Persistence.TransactionManager;
 using ToDo.Tests.Helpers;
+using ToDo.WebApi.Controllers;
+using ToDo.WebApi.Hub;
 using Xunit;
 
 namespace ToDo.Tests
 {
     public class ToDoTests : IAsyncLifetime
     {
-        private readonly string _baseUrl;
-        private readonly string _signalRUrl;
-        private HubConnection _hubConnection;
-
+        private readonly TestData _testData;
+        private readonly DataFactory<ToDoEntity> _dataFactory;
+        private readonly IRepository<ToDoEntity> _todoRepo;
+        private readonly ISession _session;
+        private readonly ILogger _logger;
+        private readonly IHubContext<ToDoHub, IToDoHub> _hubContext;
+        private readonly IMapper _mapper;
 
         public ToDoTests()
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true)
-                .AddEnvironmentVariables()
-                .Build();
+            _session = Fluently.Configure()
+                .Database(SQLiteConfiguration.Standard.ConnectionString(
+                    $"Data Source={Guid.NewGuid()};Mode=Memory;Cache=Shared"))
+                .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true))
+                .Mappings(map => map.FluentMappings.AddFromAssemblyOf<ToDoEntityMap>())
+                .BuildConfiguration()
+                .BuildSessionFactory()
+                .OpenSession();
 
-            _baseUrl = config["baseUrl"];
-            _signalRUrl = config["signalRUrl"];
+            var loggerMock = new Mock<ILogger>();
+            loggerMock.Setup(x => x.ForContext<It.IsAnyType>()).Returns(loggerMock.Object);
+            _logger = loggerMock.Object;
+
+            _hubContext = new Mock<IHubContext<ToDoHub, IToDoHub>>().Object;
+            _mapper = new MapperConfiguration(config => config.AddProfile<DatabaseProfile>()).CreateMapper();
+
+            ITransactionManager txManager = new TransactionManager(_session, _logger);
+            _todoRepo = new Repository<ToDoEntity>(_session, _logger, txManager);
+            _testData = new TestData();
+            _dataFactory = new DataFactory<ToDoEntity>(_testData.ToDos);
         }
 
         public async Task InitializeAsync()
         {
-            _hubConnection = await SignalRHelper.InitAsync(_signalRUrl);
+            await _dataFactory.InitDatabaseAsync(_session);
         }
 
-        public async Task DisposeAsync()
+        public Task DisposeAsync()
         {
-            await _hubConnection.DisposeAsync();
+            return Task.CompletedTask;
         }
 
-        [Fact(DisplayName = "Adding ToDo to db and waiting for the add signal")]
-        public async Task NoToDo_Add_ToDoAddedSignal()
+        [Theory]
+        [InlineData("*", ToDoState.Any, 0)]
+        [InlineData("NotExisting", ToDoState.Any, 0)]
+        [InlineData("TestTask", ToDoState.Any, 0)]
+        [InlineData("TestTask2", ToDoState.Any, 0)]
+        [InlineData("TestTask21", ToDoState.Ongoing, 0)]
+        [InlineData("TestTask21", ToDoState.Finished, 0)]
+        [InlineData("*", ToDoState.Finished, 0)]
+        [InlineData("*", ToDoState.Ongoing, 0)]
+        public async Task SearchPattern_Search_CorrectAmountItems(string task, ToDoState state, int page)
         {
-            var payload = new AddToDoModel("This is a test task");
+            var expected = _testData.ToDos.Where(x =>
+                x.Task.ToLowerInvariant().Contains(task == "*" ? "" : task.ToLowerInvariant()) &&
+                (state == ToDoState.Any || (state == ToDoState.Finished
+                     ? x.IsFinished
+                     : state == ToDoState.Ongoing && !x.IsFinished))).ToList();
 
-            ToDoModel added = null;
-            _hubConnection.On("ToDoAdded", new Action<object>(signal =>
-            {
-                added = JsonConvert.DeserializeObject<ToDoModel>(signal.ToString());
-            }));
+            var controller = new ToDoController(_logger, _todoRepo, _hubContext, _mapper);
 
-            using var client = new HttpClient();
-            await client.PostAsync<AddToDoModel>($"{_baseUrl}/api/ToDo", payload, default);
+            var result = await controller.SearchAsync(task, state, page, default);
 
-            var policy = Policy.Handle<Exception>().WaitAndRetry(100, x => TimeSpan.FromMilliseconds(100));
-            policy.Execute(() =>
-            {
-                if (added == null)
-                {
-                    throw new Exception("Wait more");
-                }
-            });
-            _hubConnection.Remove("ToDoAdded");
-
-            added.Id.Should().NotBeEmpty();
-            added.Created.Should().NotBeEmpty();
-            added.IsFinished.Should().BeFalse();
-            added.Task.Should().Be(payload.Task);
+            result.Page.Should().Be(page);
+            result.AllPage.Should().Be((int)Math.Ceiling(expected.Count / 25.0));
+            result.Result.Count.Should().Be(expected.Count);
         }
     }
 }

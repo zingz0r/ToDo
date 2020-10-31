@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ToDo.Persistence\ToDo.Persistence.csproj" />
+    <ProjectReference Include="..\ToDo.WebApi\ToDo.WebApi.csproj" />
   </ItemGroup>
 
 </Project>
