@@ -1,9 +1,10 @@
 using FluentAssertions;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using Moq;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
-using Serilog.Core;
+using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,8 +30,11 @@ namespace ToDo.Tests
                 .BuildSessionFactory()
                 .OpenSession();
 
-            ITransactionManager txManager = new TransactionManager(session, Logger.None);
-            _testRepo = new Repository<TestEntity>(session, Logger.None, txManager);
+            var loggerMock = new Mock<ILogger>();
+            loggerMock.Setup(x => x.ForContext<It.IsAnyType>()).Returns(loggerMock.Object);
+
+            ITransactionManager txManager = new TransactionManager(session, loggerMock.Object);
+            _testRepo = new Repository<TestEntity>(session, loggerMock.Object, txManager);
         }
 
         [Fact(DisplayName = "Exception during new item addition rolls back changes")]
